@@ -16,7 +16,7 @@ import time
 #the OpenCV library
 #Make sure that you copy this file from the opencv project to the root of this
 #project folder
-faceCascade = cv2.CascadeClassifier('/home/smaug/fall2018/instrumented_classrooom/Webcam-Face-Detect/haarcascade_frontalface_default.xml')
+faceCascade = cv2.CascadeClassifier('../resources/haarcascade_frontalface_default.xml')
 
 #The deisred output width and height
 OUTPUT_SIZE_WIDTH = 775
