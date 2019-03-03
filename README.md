@@ -5,4 +5,7 @@
 
 ### Dependencies
 
+* Python 3
+* 
+
 ### Set-up and Usage

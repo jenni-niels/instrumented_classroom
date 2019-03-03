@@ -26,7 +26,7 @@ def create_new_dir():
 
 
 
-def record_audio(dir_name):
+def record_audio(dir_name=""):
 
     filename = WAVE_OUTPUT_FILE_HEADER + ".wav"
     filename = os.path.join(dir_name, filename)
@@ -58,5 +58,5 @@ def record_audio(dir_name):
                 file.write(q.get())
 
 
-dir_name = create_new_dir()
-record_audio(dir_name)
+# dir_name = create_new_dir()
+# record_audio(dir_name)
