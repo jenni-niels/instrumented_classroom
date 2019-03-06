@@ -31,7 +31,7 @@ def doRecognizePerson(faceNames, fid):
     faceNames[fid] = "Person " + str(fid)
 
 
-def detectAndTrackMultipleFaces(dir_name=""):
+def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
     #Open the first webcame device
     capture = cv2.VideoCapture(0)
 
@@ -65,7 +65,8 @@ def detectAndTrackMultipleFaces(dir_name=""):
         #Destroy any OpenCV windows and exit the application
         cv2.destroyAllWindows()
 
-        filename = os.path.join(dir_name, "postion_info.json")
+        filename = "postion_info_" + str(itter_num) + ".json"
+        filename = os.path.join(dir_name, filename)
 
         with open(filename, "w") as file_out:
             # print(postion_info)

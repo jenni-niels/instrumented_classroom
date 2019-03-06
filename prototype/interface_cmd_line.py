@@ -3,7 +3,7 @@
 
 from datetime import datetime
 import os
-# import signal
+# import fnmatch
 import errno
 from multiprocessing import Process
 
@@ -13,19 +13,13 @@ from face_tracking import detectAndTrackMultipleFaces
 from transcribe_wav import transcribe
 # from test_mult_proc import f_rec, f_busy
 
-recording = False
-busy = False
 
-p_rec = None
-p_vid = None
-p_trans = None
-
-
-""" This function creates a new director in the current path to store output
-into.  This directory name is the current time stamp, as to avoid collisions.
-If such a directory already exists we do nothing and use it.
-"""
 def create_new_dir():
+    """
+    This function creates a new directory in the current one in which to store
+    the generated output files.  The directory name used is the current time
+    stamp.  If such a directory already exists we do nothing and use it.
+    """
     new_dir = os.path.join(os.getcwd(),
                            datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
     try:
@@ -49,8 +43,17 @@ def create_new_dir():
 # post-processing
 
 def loop():
-    global recording, busy
+    """
+    This function contains the body of logic that indefinitely records and
+    then process that information per the user's input.
+    """
+    recording, busy = False, False
+    p_rec, p_vid = None, None
+    # p_trans = None
+    itter_num = 0
+
     dir_name = create_new_dir()
+
     while True:
         if (not recording and not busy):                    # R = F and B = F
             print("Press r to start recording and s to stop recording: ")
@@ -60,8 +63,10 @@ def loop():
                 rec = input()
             recording = True
             busy = False
-            p_rec = Process(target=record_audio, args=(dir_name,))
-            p_vid = Process(target=detectAndTrackMultipleFaces, args=(dir_name,))
+            itter_num += 1
+            p_rec = Process(target=record_audio, args=(dir_name, itter_num))
+            p_vid = Process(target=detectAndTrackMultipleFaces,
+                            args=(dir_name, itter_num))
             p_rec.start()
             p_vid.start()
         elif recording:                                     # R = T and B = _
@@ -74,19 +79,36 @@ def loop():
             p_rec.terminate()
             p_vid.terminate()
             print("* busy")
-            p_trans = Process(target=transcribe, args=(dir_name, "recording_.wav"))
-            p_trans.start()
+            # p_trans = Process(target=transcribe, args=(dir_name, "recording_.wav"))
+            # p_trans.start()
 
         else:                                              # R = F and B = T
-            if p_trans.is_alive():
+            # files_to_trans = fnmatch.filter(os.listdir('.'), 'recording_*.wav')
+            # for file in files_to_trans
+            if p_rec.is_alive():
                 pass
+                 # print("this shouldn't happen")
             else:
+                files_to_trans = "recording_" + str(itter_num) + ".wav"
+                transcribe(dir_name, files_to_trans, itter_num)
                 print("To record again, press r, otherwise press any other key: ")
                 rec = input()
                 if rec == 'r':
-                    print("Don't have this functionality yet.  We're working on it :)")
-                exit(0)  # add post processing here
-            exit(0)
+                    busy = False
+                    recording = False
+                else:
+                    exit(0)  # add post processing here
+
+
+
+            # if p_trans.is_alive():
+            #     pass
+            # else:
+            #     print("To record again, press r, otherwise press any other key: ")
+            #     rec = input()
+            #     if rec == 'r':
+            #         print("Don't have this functionality yet.  We're working on it :)")
+            #     exit(0)  # add post processing here
 
 
 if __name__ == '__main__':

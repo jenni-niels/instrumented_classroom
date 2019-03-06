@@ -40,9 +40,9 @@ def create_new_dir():
 Records live audio from microphone and save it to file recording_.wav in the
 director passed.  If no directory is specified it is saved at the current path.
 '''
-def record_audio(dir_name=""):
+def record_audio(dir_name="", rec_itter=0):
 
-    filename = WAVE_OUTPUT_FILE_HEADER + ".wav"
+    filename = WAVE_OUTPUT_FILE_HEADER + str(rec_itter) + ".wav"
     filename = os.path.join(dir_name, filename)
 
     device_info = sd.query_devices(DEVICE, 'input')

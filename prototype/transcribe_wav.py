@@ -19,7 +19,6 @@ from google.cloud.speech import types
 
 def write_output(trans_response, output_file):
     # build object to save
-    print(output_file)
     transcript = []
 
     for result in trans_response.results:
@@ -31,7 +30,6 @@ def write_output(trans_response, output_file):
                                                               end_time =  word.end_time.seconds + word.end_time.nanos * 1e-9),
                                             result.alternatives[0].words))
         transcript.append(sec_info)
-        print("confidence")
 
     # print json file
     with open(output_file, "w") as file_out:
@@ -39,7 +37,7 @@ def write_output(trans_response, output_file):
 
 
 
-def transcribe(dir_name, input_file):
+def transcribe(dir_name, input_file, rec_num):
     # Instantiates a client
     client = speech.SpeechClient()
 
@@ -58,6 +56,6 @@ def transcribe(dir_name, input_file):
 
     response = client.recognize(config, audio)
 
-    output_file = os.path.join(dir_name, "transcript_info.json")
+    output_file = os.path.join(dir_name,
+                               "transcript_info_" + str(rec_num) + ".json")
     write_output(response, output_file)
-    exit(0)
