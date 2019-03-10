@@ -51,11 +51,10 @@ def loop():
     p_rec, p_vid = None, None
     # p_trans = None
     itter_num = 0
-
     dir_name = create_new_dir()
-
     while True:
         if (not recording and not busy):                    # R = F and B = F
+            # dir_name = create_new_dir()
             print("Press r to start recording and s to stop recording: ")
             rec = input()
             while rec != "r":
@@ -97,7 +96,7 @@ def loop():
                     busy = False
                     recording = False
                 else:
-                    exit(0)  # add post processing here
+                    exit(0)
 
 
 

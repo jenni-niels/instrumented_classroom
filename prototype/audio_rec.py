@@ -72,6 +72,12 @@ def record_audio(dir_name="", rec_itter=0):
             while True:
                 file.write(q.get())
 
+            # clean-up
+            # merge audio files
+            # join spawned children
+            # merge transcript file
+            # exit(0)
+
 
 # dir_name = create_new_dir()
 # record_audio(dir_name)
