@@ -10,7 +10,7 @@ from multiprocessing import Process
 ## Import own-code
 from audio_rec import record_audio
 from face_tracking import detectAndTrackMultipleFaces
-from transcribe_wav import transcribe
+#from transcribe_wav import transcribe
 # from test_mult_proc import f_rec, f_busy
 
 
@@ -78,6 +78,7 @@ def loop():
             p_rec.terminate()
             p_vid.terminate()
             print("* busy")
+            p_rec.join()
             # p_trans = Process(target=transcribe, args=(dir_name, "recording_.wav"))
             # p_trans.start()
 

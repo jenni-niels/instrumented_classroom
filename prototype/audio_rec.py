@@ -72,6 +72,7 @@ def record_audio(dir_name="", rec_itter=0):
             print("* recording")
             while True:
                 file.write(q.get())
+                file.flush()
 
             # clean-up
             # merge audio files
