@@ -1,23 +1,18 @@
 import os
 # import argparse
 import json
+import tempfile
+from scipy.io import wavfile as wf
+import numpy as np
+from math import ceil
 # import pyaudio
+import wave
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 
 
-# set up I/O files and parse arguments
-
-# parser = argparse.ArgumentParser(description="Takes in a wav file and outputs "\
-#                                    "the transcript info in a json file.",
-#                                  prog="transcribe_wav.py")
-
-# parser.add_argument('input_file', help="input wav file to transcribe")
-# args = parser.parse_args()
-
-
-def write_output(trans_response, output_file):
+def write_output(trans_response, time_offset, output_file=""):
     # build object to save
     transcript = []
 
@@ -26,15 +21,31 @@ def write_output(trans_response, output_file):
         sec_info["transcript"] = result.alternatives[0].transcript
         sec_info["confidence"] = result.alternatives[0].confidence
         sec_info["word_timings"] = list(map(lambda word: dict(word = word.word,
-                                                              start_time = word.start_time.seconds + word.start_time.nanos * 1e-9,
-                                                              end_time =  word.end_time.seconds + word.end_time.nanos * 1e-9),
+                                                              start_time = time_offset + word.start_time.seconds + word.start_time.nanos * 1e-9,
+                                                              end_time = time_offset + word.end_time.seconds + word.end_time.nanos * 1e-9),
                                             result.alternatives[0].words))
         transcript.append(sec_info)
 
-    # print json file
-    with open(output_file, "w") as file_out:
-        json.dump(transcript, file_out, indent = 2)
+    return transcript
+    # # print json file
+    # with open(output_file, "w") as file_out:
+    #     json.dump(transcript, file_out, indent = 2)
 
+
+def read_chunks(input_file):
+    chunks = []
+    rate, data = wf.read(input_file)
+    duration = len(data) / rate
+    num_chunks = ceil(duration / 55)
+
+    for chunk in np.array_split(data, num_chunks):
+        temp = tempfile.TemporaryFile()
+        wf.write(temp, rate, chunk)
+        # print(len(chunk)/rate)
+        chunks.append(temp.read())
+        temp.close()
+
+    return chunks, (len(data) / (num_chunks*rate))
 
 
 def transcribe(dir_name, input_file, rec_num):
@@ -42,10 +53,6 @@ def transcribe(dir_name, input_file, rec_num):
     client = speech.SpeechClient()
 
     input_file = os.path.join(dir_name, input_file)
-    # read in audio file
-    with open(input_file, "rb") as audio_file:
-        content = audio_file.read()
-        audio = types.RecognitionAudio(content=content)
 
     # configure and call recognition API
     config = types.RecognitionConfig(
@@ -54,8 +61,23 @@ def transcribe(dir_name, input_file, rec_num):
         enable_word_time_offsets=True,
         enable_automatic_punctuation=True)
 
-    response = client.recognize(config, audio)
+    # read in audio file
+    transcript = []
+
+    chunks, time_offset = read_chunks(input_file)
+
+    i = 0
+    for chunk in chunks:
+
+        audio = types.RecognitionAudio(content=chunk)
+
+        response = client.recognize(config, audio)
+
+        transcript.append(write_output(response, i*time_offset))
+        i += 1
 
     output_file = os.path.join(dir_name,
                                "transcript_info_" + str(rec_num) + ".json")
-    write_output(response, output_file)
+    # write_output(response, output_file)
+    with open(output_file, "w") as file_out:
+        json.dump(transcript, file_out, indent = 2)

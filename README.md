@@ -10,5 +10,10 @@ Instrumented Classroom is an
 * Python 3.6.7
 * Open CV
 * Google Speech-to-Text API
+* Pyaudio
+* Numpy
+* Scipy
+* sounddevice
+* soundfile
 
 ### Set-up and Usage

@@ -88,15 +88,17 @@ def loop():
                 pass
                  # print("this shouldn't happen")
             else:
-                files_to_trans = "recording_" + str(itter_num) + ".wav"
-                transcribe(dir_name, files_to_trans, itter_num)
-                print("To record again, press r, otherwise press any other key: ")
-                rec = input()
-                if rec == 'r':
-                    busy = False
-                    recording = False
-                else:
-                    exit(0)
+                print("Bye Bye.")
+                exit(0)
+                # files_to_trans = "recording_" + str(itter_num) + ".wav"
+                # transcribe(dir_name, files_to_trans, itter_num)
+                # print("To record again, press r, otherwise press any other key: ")
+                # rec = input()
+                # if rec == 'r':
+                #     busy = False
+                #     recording = False
+                # else:
+                #     exit(0)
 
 
 

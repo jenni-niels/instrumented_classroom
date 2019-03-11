@@ -46,6 +46,7 @@ def record_audio(dir_name="", rec_itter=0):
     filename = os.path.join(dir_name, filename)
 
     device_info = sd.query_devices(DEVICE, 'input')
+    print(device_info)
     rate = int(device_info['default_samplerate'])
 
     q = queue.Queue()
@@ -78,6 +79,6 @@ def record_audio(dir_name="", rec_itter=0):
             # merge transcript file
             # exit(0)
 
-
-# dir_name = create_new_dir()
-# record_audio(dir_name)
+if __name__ == "__main__":
+    dir_name = create_new_dir()
+    record_audio(dir_name)
