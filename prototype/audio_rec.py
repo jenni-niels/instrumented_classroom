@@ -15,7 +15,7 @@ import soundfile as sf
 
 
 
-DEVICE = 2
+DEVICE = "blue"
 CHANNELS = 1
 WAVE_OUTPUT_FILE_HEADER = "recording_"
 
@@ -67,13 +67,14 @@ def record_audio(dir_name="", rec_itter=0):
                                                     print("* done recording"),
                                                     exit(0)))
 
-        with sd.InputStream(samplerate=rate, device=DEVICE, channels=CHANNELS,
+        with sd.InputStream(# samplerate=rate, device=DEVICE, channels=CHANNELS,
+                            samplerate=rate, channels=CHANNELS,
                             callback=callback):
             print("* recording")
             while True:
                 file.write(q.get())
-                file.flush()
 
+                # file.flush()
             # clean-up
             # merge audio files
             # join spawned children

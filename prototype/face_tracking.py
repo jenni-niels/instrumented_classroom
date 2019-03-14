@@ -57,6 +57,8 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
     faceTrackers = {}
     faceNames = {}
 
+    capture.set(cv2.CAP_PROP_FPS, 10)
+
     # object to save
     postion_info = {"framerate" : capture.get(cv2.CAP_PROP_FPS), "frames" : []}
 
@@ -220,9 +222,11 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
                     #Start a new thread that is used to simulate
                     #face recognition. This is not yet implemented in this
                     #version :)
-                    t = threading.Thread(target=doRecognizePerson,
-                                         args=(faceNames, currentFaceID))
-                    t.start()
+                    # t = threading.Thread(target=doRecognizePerson,
+                    #                      args=(faceNames, currentFaceID))
+                    # t.start()
+
+                    faceNames[currentFaceID] = "Person " + str(currentFaceID)
 
                     #Increase the currentFaceID counter
                     currentFaceID += 1

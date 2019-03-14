@@ -4,13 +4,14 @@
 from datetime import datetime
 import os
 # import fnmatch
+import time
 import errno
 from multiprocessing import Process
 
 ## Import own-code
 from audio_rec import record_audio
 from face_tracking import detectAndTrackMultipleFaces
-#from transcribe_wav import transcribe
+from transcribe_wav import transcribe
 # from test_mult_proc import f_rec, f_busy
 
 
@@ -53,6 +54,7 @@ def loop():
     itter_num = 0
     dir_name = create_new_dir()
     while True:
+        time.sleep(0.1)
         if (not recording and not busy):                    # R = F and B = F
             # dir_name = create_new_dir()
             print("Press r to start recording and s to stop recording: ")
@@ -86,20 +88,20 @@ def loop():
             # files_to_trans = fnmatch.filter(os.listdir('.'), 'recording_*.wav')
             # for file in files_to_trans
             if p_rec.is_alive():
+                # print("this shouldn't happen")
                 pass
-                 # print("this shouldn't happen")
             else:
-                print("Bye Bye.")
-                exit(0)
-                # files_to_trans = "recording_" + str(itter_num) + ".wav"
-                # transcribe(dir_name, files_to_trans, itter_num)
-                # print("To record again, press r, otherwise press any other key: ")
-                # rec = input()
-                # if rec == 'r':
-                #     busy = False
-                #     recording = False
-                # else:
-                #     exit(0)
+                # print("Bye Bye.")
+                # exit(0)
+                files_to_trans = "recording_" + str(itter_num) + ".wav"
+                transcribe(dir_name, files_to_trans, itter_num)
+                print("To record again, press r, otherwise press any other key: ")
+                rec = input()
+                if rec == 'r':
+                    busy = False
+                    recording = False
+                else:
+                    exit(0)
 
 
 
