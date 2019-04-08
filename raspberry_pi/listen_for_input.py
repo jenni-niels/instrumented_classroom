@@ -9,7 +9,7 @@ import os, signal
 
 RecLEDPin = 18  # blue
 BusyLEDPin = 23 # red
-ButtonPin = 24
+ButtonPin = 17
 
 
 Recording = False
@@ -21,12 +21,14 @@ p_rec = Process(target=f_rec, args=(datetime.now().strftime('%H-%M-%S'),))
 def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
+    print("setting up")
     GPIO.setup(RecLEDPin, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(BusyLEDPin, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(ButtonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 def updateStatus(ev=None):
     global Recording, Busy, p_rec
+    print("time to update")
     if (not Recording and not Busy):
         Recording = True
         Busy = False
@@ -44,6 +46,7 @@ def updateStatus(ev=None):
     GPIO.output(BusyLEDPin, Busy)
 
 def loop():
+    print("in loop")
     GPIO.add_event_detect(ButtonPin, GPIO.FALLING, callback=updateStatus,
                           bouncetime=200)
     while True:

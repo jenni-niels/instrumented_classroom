@@ -9,10 +9,11 @@ MIT License (https://github.com/gdiepen/face-recognition)
 import json
 import os
 import threading
-# import time
+import time
 import signal
-import cv2
 import dlib
+import cv2
+
 
 #Initialize a face cascade using the frontal face haar cascade provided with
 #the OpenCV library
@@ -23,6 +24,9 @@ faceCascade = cv2.CascadeClassifier('../resources/haarcascade_frontalface_defaul
 #The deisred output width and height
 OUTPUT_SIZE_WIDTH = 775
 OUTPUT_SIZE_HEIGHT = 600
+FRAME_RATE = 10
+FRAME_WIDTH = 320
+FRAME_HEIGHT = 240
 
 
 #We are not doing really face recognition
@@ -36,12 +40,12 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
     capture = cv2.VideoCapture(0)
 
     #Create two opencv named windows
-    cv2.namedWindow("base-image", cv2.WINDOW_AUTOSIZE)
-    cv2.namedWindow("result-image", cv2.WINDOW_AUTOSIZE)
+    # cv2.namedWindow("base-image", cv2.WINDOW_AUTOSIZE)
+    # cv2.namedWindow("result-image", cv2.WINDOW_AUTOSIZE)
 
-    #Position the windows next to eachother
-    cv2.moveWindow("base-image", 0, 100)
-    cv2.moveWindow("result-image", 400, 100)
+    # #Position the windows next to eachother
+    # cv2.moveWindow("base-image", 0, 100)
+    # cv2.moveWindow("result-image", 400, 100)
 
     #Start the window thread for the two windows we are using
     # cv2.startWindowThread()
@@ -57,10 +61,19 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
     faceTrackers = {}
     faceNames = {}
 
-    capture.set(cv2.CAP_PROP_FPS, 10)
+    print(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+    print(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    capture.set(cv2.CAP_PROP_FPS, FRAME_RATE)
+    # capture.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
+    # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
+
+    # print(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+    # print(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
 
     # object to save
-    postion_info = {"framerate" : capture.get(cv2.CAP_PROP_FPS), "frames" : []}
+    postion_info = {"framerate" : FRAME_RATE, "frames" : []}
 
     def graceful_exit(signum, frame):
         del signum, frame
@@ -84,7 +97,9 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
         _, fullSizeBaseImage = capture.read()
 
         #Resize the image to 320x240
-        baseImage = cv2.resize(fullSizeBaseImage, (320, 240))
+        # baseImage = cv2.resize(fullSizeBaseImage, (120, 90))
+        # baseImage = cv2.resize(fullSizeBaseImage, (160, 120))
+        baseImage = cv2.resize(fullSizeBaseImage, (360, 240))
 
         #Check if a key was pressed and if it was Q, then break
         #from the infinite loop
@@ -212,10 +227,10 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
                     #Create and store the tracker
                     tracker = dlib.correlation_tracker()
                     tracker.start_track(baseImage,
-                                        dlib.rectangle(x-10,
-                                                       y-20,
-                                                       x+w+10,
-                                                       y+h+20))
+                                        dlib.rectangle(x-5,
+                                                       y-10,
+                                                       x+w+5,
+                                                       y+h+10))
 
                     faceTrackers[currentFaceID] = tracker
 
@@ -286,10 +301,10 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
                                  (OUTPUT_SIZE_WIDTH, OUTPUT_SIZE_HEIGHT))
 
         #Finally, we want to show the images on the screen
-        cv2.imshow("base-image", baseImage)
-        cv2.imshow("result-image", largeResult)
+        # cv2.imshow("base-image", baseImage)
+        # cv2.imshow("result-image", largeResult)
 
-
+        time.sleep(0.05)
 
 
     # #To ensure we can also deal with the user pressing Ctrl-C in the console

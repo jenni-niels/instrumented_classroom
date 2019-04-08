@@ -89,6 +89,7 @@ def loop():
             # for file in files_to_trans
             if p_rec.is_alive():
                 # print("this shouldn't happen")
+                print(busy)
                 pass
             else:
                 # print("Bye Bye.")

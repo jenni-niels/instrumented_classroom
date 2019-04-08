@@ -46,8 +46,9 @@ def record_audio(dir_name="", rec_itter=0):
     filename = os.path.join(dir_name, filename)
 
     device_info = sd.query_devices(DEVICE, 'input')
-    print(device_info)
+    # print(device_info)
     rate = int(device_info['default_samplerate'])
+    # print(rate)
 
     q = queue.Queue()
 
@@ -67,8 +68,7 @@ def record_audio(dir_name="", rec_itter=0):
                                                     print("* done recording"),
                                                     exit(0)))
 
-        with sd.InputStream(# samplerate=rate, device=DEVICE, channels=CHANNELS,
-                            samplerate=rate, channels=CHANNELS,
+        with sd.InputStream(samplerate=rate, device=DEVICE, channels=CHANNELS,
                             callback=callback):
             print("* recording")
             while True:
