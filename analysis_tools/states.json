@@ -1,0 +1,39 @@
+[
+  {
+    "state": "Agreement",
+    "flags": [["yeah"], ["yea"], ["yeah", "yeah"], ["same","lines"], ["same", "idea"],
+             ["great", "idea"], ["that's", "true"]]
+  },
+  {
+    "state": "Idea Generation",
+    "flags": [["i", "think", "that"], ["i'm", "thinking", "that"], ["i'm", "thinking"]]
+  },
+  {
+    "state": "Revoicing",
+    "flags": [["i", "thought"]]
+  },
+  {
+    "state": "Problem Definition",
+    "flags": [["supposed", "to"]]
+  },
+  {
+    "state": "Request",
+    "flags": []
+  },
+  {
+    "state": "Feasibility Analysis",
+    "flags": [["i'm", "worried"], ["how", "are"]]
+  },
+  {
+    "state": "Evaluation",
+    "flags": [["would", "be", "better"]]
+  },
+  {
+    "state": "Decision",
+    "flags": []
+  },
+  {
+    "state": "Modeling",
+    "flags": [["what", "if"], ["i", "would", "say"]]
+  }
+]

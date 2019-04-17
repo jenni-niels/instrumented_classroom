@@ -11,7 +11,7 @@ positioning data of students.
 
 ### Dependencies
 * Hardware
-    * Raspberry Pi
+    * Raspberry Pi 3 B
     * USB Microphone
     * USB Webcam
 
@@ -25,4 +25,10 @@ positioning data of students.
     * sounddevice
     * soundfile
 
+
 ### Set-up and Usage
+
+#### Interface
+
+
+#### 
