@@ -26,6 +26,10 @@ positioning data of students.
     * soundfile
 
 
+Given python3 and pip3, running `sudo setup_dependencies.sh` should install the
+rest of the listed dependencies.
+
+
 ### Set-up and Usage
 
 #### Interface
@@ -71,10 +75,10 @@ The JSON object have the following format:
 
 position_info_n.json:
 
-    {"framerate": 30,
+    {"framerate": 10,
      "frames": [{"frame number" : 1,
-                 "object positions": [{"object":"Person A", "position":[x, y, w, h]},
-                                      {"object":"Person B", "position": [x’ , y’ , w’ , h’]},
+                 "object positions": [{"object":"Person 1", "position":[x, y, w, h]},
+                                      {"object":"Person 2", "position": [x’ , y’ , w’ , h’]},
                                        ...
                                      ]
                 },
