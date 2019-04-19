@@ -12,6 +12,7 @@ from face_tracking import detectAndTrackMultipleFaces
 from transcribe_wav import transcribe
 
 ## Set Up Globals
+## TODO:: Change to Constants
 RecLedPin = 18          # Recording Signal -- Blue
 BusyLedPin = 23         # Busy Signal -- Red
 OnLedPin = 24           # Alive Signal -- Green
@@ -19,6 +20,7 @@ OnLedPin = 24           # Alive Signal -- Green
 ToggleBtnPin = 17       # Button to Toggle State
 StopBtnPin = 22         # Button to power off
 
+STOP_SIGNAL = "STOP_REC"
 
 class CurrentState:
     def __init__(self, rec, busy, p_audio=None, p_video=None, dir_name=""):
@@ -28,7 +30,17 @@ class CurrentState:
         self.p_video = p_video
         self.dir_name = dir_name
         self.itter_num = 0
+        self.stop_filename = os.path.join(self.dir_name, STOP_SIGNAL)
 
+        if os.path.isfile(self.stop_filename):
+            os.remove(self.stop_filename)
+
+    # def promptProceses(self):
+    #     if (not self.rec and not self.busy):
+    #         self.start_recording()
+    #     elif(self.rec):            # R: True, B: meh
+    #         self.stop_recording()
+    #         self.trans_recording()
 
     def start_recording(self):
         self.rec = True
@@ -50,11 +62,15 @@ class CurrentState:
         self.busy = True
         self.rec = False
 
-        self.p_audio.terminate()
-        self.p_video.terminate()
+        open(self.stop_filename, 'a').close()
+
+        # self.p_audio.terminate()
+        # self.p_video.terminate()
         self.p_audio.join()
         self.p_video.join()
         
+        os.remove(self.stop_filename)
+
         self.busy = False
         GPIO.output(RecLedPin, self.rec)
         GPIO.output(BusyLedPin, self.busy)
@@ -68,8 +84,10 @@ class CurrentState:
 
         files_to_trans = "recording_" + str(self.itter_num) + ".wav"
         transcribe(self.dir_name, files_to_trans, self.itter_num)
+        # time.sleep(1)
        
         self.busy = False
+        print(self.rec)
         GPIO.output(RecLedPin, self.rec)
         GPIO.output(BusyLedPin, self.busy)
         print("* not busy")
@@ -105,6 +123,7 @@ def setup():
 
 
 def promptProceses(state):
+    print("state change: ", state.rec, state.busy)
     if (not state.rec and not state.busy):
         state.start_recording()
     elif(state.rec):            # R: True, B: meh
@@ -130,14 +149,15 @@ def loop():
     # wait for falling and set bouncetime to prevent the callback function from
     # being called multiple times when the button is pressed
     GPIO.add_event_detect(ToggleBtnPin, GPIO.FALLING, callback=updateStatus,
-                          bouncetime=200)
+                          bouncetime=100)
     GPIO.add_event_detect(StopBtnPin, GPIO.FALLING, callback=shutDown,
-                          bouncetime=200)
+                          bouncetime=100)
     while True:
         time.sleep(0.02)   # Don't do anything
 
 
 def destroy(state):
+    print("ShutDown? ", state.rec, state.busy)
     if not (state.rec or state.busy):
         GPIO.output(RecLedPin, GPIO.LOW)
         GPIO.output(BusyLedPin, GPIO.LOW)

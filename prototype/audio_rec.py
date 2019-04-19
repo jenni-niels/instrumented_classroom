@@ -18,6 +18,7 @@ import soundfile as sf
 DEVICE = "blue"
 CHANNELS = 1
 WAVE_OUTPUT_FILE_HEADER = "recording_"
+STOP_SIGNAL = "STOP_REC"
 
 
 '''
@@ -38,12 +39,14 @@ def create_new_dir():
 
 '''
 Records live audio from microphone and save it to file recording_.wav in the
-director passed.  If no directory is specified it is saved at the current path.
+directory passed.  If no directory is specified it is saved at the current path.
 '''
 def record_audio(dir_name="", rec_itter=0):
 
     filename = WAVE_OUTPUT_FILE_HEADER + str(rec_itter) + ".wav"
     filename = os.path.join(dir_name, filename)
+
+    stop_filename = os.path.join(dir_name, STOP_SIGNAL)
 
     device_info = sd.query_devices(DEVICE, 'input')
     # print(device_info)
@@ -61,18 +64,25 @@ def record_audio(dir_name="", rec_itter=0):
 
     with sf.SoundFile(filename, mode='x', samplerate=rate,
                       channels=CHANNELS) as file:
-        signal.signal(signal.SIGINT, lambda n, f: (file.close(),
-                                                   print("* done recording"),
-                                                   exit(0)))
-        signal.signal(signal.SIGTERM, lambda n, f: (file.close(),
-                                                    print("* done recording"),
-                                                    exit(0)))
+        # signal.signal(signal.SIGINT, lambda n, f: (file.close(),
+        #                                            print("* done recording"),
+        #                                            exit(0)))
+        # signal.signal(signal.SIGTERM, lambda n, f: (file.close(),
+        #                                             print("* done recording"),
+        #                                             exit(0)))
 
         with sd.InputStream(samplerate=rate, device=DEVICE, channels=CHANNELS,
                             callback=callback):
             print("* recording")
             while True:
                 file.write(q.get())
+
+                if os.path.isfile(stop_filename):
+                    file.close()
+                    print("* done recording")
+                    exit(0)
+
+
 
                 # file.flush()
             # clean-up

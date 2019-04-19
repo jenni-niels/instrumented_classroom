@@ -28,6 +28,8 @@ FRAME_RATE = 10
 FRAME_WIDTH = 320
 FRAME_HEIGHT = 240
 
+STOP_SIGNAL = "STOP_REC"
+
 
 #We are not doing really face recognition
 def doRecognizePerson(faceNames, fid):
@@ -75,8 +77,8 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
     # object to save
     postion_info = {"framerate" : FRAME_RATE, "frames" : []}
 
-    def graceful_exit(signum, frame):
-        del signum, frame
+    def graceful_exit():
+        # del signum, frame
         #Destroy any OpenCV windows and exit the application
         cv2.destroyAllWindows()
 
@@ -89,10 +91,14 @@ def detectAndTrackMultipleFaces(dir_name="", itter_num=0):
 
         exit(0)
 
-    signal.signal(signal.SIGINT, graceful_exit)
-    signal.signal(signal.SIGTERM, graceful_exit)
+    stop_filename = os.path.join(dir_name, STOP_SIGNAL)
+    # signal.signal(signal.SIGINT, graceful_exit)
+    # signal.signal(signal.SIGTERM, graceful_exit)
 
     while True:
+        if os.path.isfile(stop_filename):
+            graceful_exit()
+
         #Retrieve the latest image from the webcam
         _, fullSizeBaseImage = capture.read()
 
